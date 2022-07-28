@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1054513263986",
+    "firebase_url": "https://mambo-415fd-default-rtdb.firebaseio.com",
+    "project_id": "mambo-415fd",
+    "storage_bucket": "mambo-415fd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1054513263986:android:076fcd7e0ddfe94cb619eb",
+        "android_client_info": {
+          "package_name": "com.example.learningdart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1054513263986-c54qvu4gja7g3cnq5di2a1amakil44uv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5Ze-JTAvJGsjNI9x5JwKWT-9bwXoTmNw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1054513263986-c54qvu4gja7g3cnq5di2a1amakil44uv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
