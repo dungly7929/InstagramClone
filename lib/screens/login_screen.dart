@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learningdart/resources/auth_method.dart';
+import 'package:learningdart/screens/home_screen.dart';
 import 'package:learningdart/utils/colors.dart';
 import 'package:learningdart/utils/utils.dart';
 import 'package:learningdart/widgets/text_field_input.dart';
@@ -33,6 +34,8 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text, password: _passwordController.text);
 
     if (res == 'success') {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()));
     } else {
       showSnackBar(res, context);
     }
