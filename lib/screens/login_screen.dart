@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learningdart/resources/auth_method.dart';
-import 'package:learningdart/screens/home_screen.dart';
+import 'package:learningdart/responsive/mobile_screenlayout.dart';
+import 'package:learningdart/responsive/responsive.dart';
+import 'package:learningdart/screens/signup_screen.dart';
 import 'package:learningdart/utils/colors.dart';
 import 'package:learningdart/utils/utils.dart';
 import 'package:learningdart/widgets/text_field_input.dart';
+
+import '../responsive/web_screenlayout.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -25,6 +29,12 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController.dispose();
   }
 
+  void navigateToSignUp() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => const SignUpScreen(),
+    ));
+  }
+
   void loginUser() async {
     setState(() {
       _isLoading = true;
@@ -35,7 +45,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (res == 'success') {
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()));
+        MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+            mobileScreenLayout: MobileSreenLayout(),
+            webScreenLayout: WebScreenLayout(),
+          ),
+        ),
+      );
     } else {
       showSnackBar(res, context);
     }
@@ -125,7 +141,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       vertical: 8,
                     ),
                   ),
-                  InkWell(
+                  GestureDetector(
+                    onTap: navigateToSignUp,
                     child: Container(
                       child: const Text(
                         "Sign up.",

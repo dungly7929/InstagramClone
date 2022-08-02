@@ -7,9 +7,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:learningdart/resources/auth_method.dart';
 import 'package:learningdart/resources/signupdatamodel.dart';
 import 'package:learningdart/resources/validators.dart';
+import 'package:learningdart/responsive/mobile_screenlayout.dart';
+import 'package:learningdart/responsive/web_screenlayout.dart';
+import 'package:learningdart/screens/login_screen.dart';
 import 'package:learningdart/utils/colors.dart';
 import 'package:learningdart/utils/utils.dart';
 import 'package:learningdart/widgets/text_field_input.dart';
+
+import '../responsive/responsive.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -30,6 +35,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Uint8List? _image = null;
   bool _isLoading = false;
+
+  void navigateToLogin() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => const LoginScreen(),
+    ));
+  }
 
   @override
   void dispose() {
@@ -76,7 +87,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     if (res != 'success') {
       showSnackBar(res, context);
-    } else {}
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+            mobileScreenLayout: MobileSreenLayout(),
+            webScreenLayout: WebScreenLayout(),
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -208,7 +228,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: const Text('Already have an account ?'),
                     padding: const EdgeInsets.symmetric(vertical: 8),
                   ),
-                  InkWell(
+                  GestureDetector(
+                    onTap: navigateToLogin,
                     child: Container(
                       child: const Text(
                         'Log in',
