@@ -33,7 +33,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _usernameController = TextEditingController();
   double _strength = 0;
 
-  Uint8List? _image = null;
+  Uint8List? _image;
   bool _isLoading = false;
 
   void navigateToLogin() {
