@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:learningdart/resources/auth_method.dart';
 import 'package:learningdart/utils/colors.dart';
+import 'package:learningdart/utils/utils.dart';
 import 'package:learningdart/widgets/text_field_input.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,6 +22,16 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+  }
+
+  void loginUser() async {
+    String res = await AuthMethods().loginUser(
+        email: _emailController.text, password: _passwordController.text);
+
+    if (res == 'success') {
+    } else {
+      showSnackBar(res, context);
+    }
   }
 
   @override
@@ -44,6 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 64),
               //Textfile input for email
+
               TextFieldInput(
                 hintText: 'Enter your email',
                 textInputType: TextInputType.emailAddress,
@@ -66,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               //button login
               InkWell(
+                onTap: loginUser,
                 child: Container(
                   child: const Text('Log in'),
                   width: double.infinity,

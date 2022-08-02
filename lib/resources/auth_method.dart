@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,9 +25,11 @@ class AuthMethods {
       if (email.isNotEmpty ||
           password.isNotEmpty ||
           username.isNotEmpty ||
-          bio.isNotEmpty ||
-          file != null) {
+          bio.isNotEmpty) {
         //register user
+        if (file == null) {
+          return 'please select your profile picture to continue ';
+        }
         UserCredential cred = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
 
@@ -36,6 +37,7 @@ class AuthMethods {
 
         String photoURL = await StorageMethods()
             .uploadImageToStorage('profilePics', file, false);
+
         //add a new user to firebasefirestorage
         await _firestorage.collection('users').doc(cred.user!.uid).set({
           'username': username,
@@ -49,9 +51,38 @@ class AuthMethods {
 
         res = "success";
       }
+    } on FirebaseAuthException catch (err) {
+      res = err.toString();
+      // if(err.code == 'unknown')
+      // {
+
+      // }
+      // if (err.code == 'invalid-email') {
+      //   res = 'The email is badly formatted.';
+      // }
+      // else if (err.code == 'weak-password') {}
     } catch (err) {
       res = err.toString();
     }
+    return res;
+  }
+
+  Future<String> loginUser(
+      {required String email, required String password}) async {
+    String res = "Some error occurred";
+
+    try {
+      if (email.isNotEmpty || password.isNotEmpty) {
+        await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
+        res = "success";
+      } else {
+        "Please enter all the fields";
+      }
+    } catch (err) {
+      res = err.toString();
+    }
+
     return res;
   }
 }

@@ -8,18 +8,16 @@ class Validatros {
 
     return regex.hasMatch(emailValue);
   }
+}
 
-  String eValidPassword(String input) {
-    final RegExp regex =
-        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+bool eValidPassword(input) {
+  final RegExp regex =
+      RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
 
-    if (input.isEmpty) {
-      return "This can not be empty";
-    } else if (!regex.hasMatch(input)) {
-      return "Please input ";
-    }
-    return "hehe";
+  if (!regex.hasMatch(input)) {
+    return false;
   }
+  return true;
 }
 
 //valid Username input

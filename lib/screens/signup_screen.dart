@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -25,7 +26,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
-  Uint8List? _image;
+  double _strength = 0;
+
+  Uint8List? _image = null;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -44,191 +48,180 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
+  void signUpUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    if (_image == null) {
+      http
+          .get(Uri.parse(
+              'https://www.gravatar.com/avatar/e944138e1114aefe4b08848a46465589'))
+          .then((response) {
+        _image = response.bodyBytes;
+      });
+    }
+
+    String res = await AuthMethods().signUpUser(
+      email: _emailController.text,
+      password: _passwordController.text,
+      username: _usernameController.text,
+      bio: _bioController.text,
+      file: _image!,
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (res != 'success') {
+      showSnackBar(res, context);
+    } else {}
+  }
+
   @override
   Widget build(BuildContext context) {
     //use to check the keyboaard is open or not
     final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
+    double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: Form(
-        key: _formKey,
-        autovalidateMode: AutovalidateMode.always,
-        onChanged: () => setState(() {
-          _btnEnabled = _formKey.currentState!.validate();
-        }),
-        child: Center(
-          child: SingleChildScrollView(
-            reverse: true,
-            padding: EdgeInsets.all(32),
-            child: Column(
-              children: [
-                //svg picture
-                SvgPicture.asset(
-                  'assets/ic_instagram.svg',
-                  color: primaryColor,
-                  height: 64,
-                ),
+      body: Center(
+        child: SingleChildScrollView(
+          reverse: true,
+          padding: EdgeInsets.all(32),
+          child: Column(
+            children: [
+              //svg picture
+              SvgPicture.asset(
+                'assets/ic_instagram.svg',
+                color: primaryColor,
+                height: 64,
+              ),
 
-                const SizedBox(
-                  height: 16,
-                ),
-                //Cicular Widget to accept and show our selected file
-                if (!isKeyboard)
-                  Stack(
-                    children: [
-                      _image != null
-                          ? CircleAvatar(
-                              radius: 64,
-                              backgroundImage: MemoryImage(_image!),
-                            )
-                          : CircleAvatar(
-                              radius: 64,
-                              backgroundImage: NetworkImage(
-                                  'https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg'),
-                            ),
-                      Positioned(
-                          bottom: -10,
-                          left: 80,
-                          child: IconButton(
-                            onPressed: selectImage,
-                            icon: const Icon(
-                              Icons.add_a_photo,
-                            ),
-                          ))
-                    ],
-                  ),
-
-                const SizedBox(
-                  height: 16,
-                ),
-
-                //Textfield input for username
-                TextFormField(
-                  controller: _usernameController,
-                  cursorColor: Colors.blueAccent,
-                  keyboardType: TextInputType.text,
-                  obscureText: false,
-                  onChanged: (value) => model.username,
-                  validator: (value) => evalUsername(value),
-                  decoration: InputDecoration(
-                      icon: Icon(Icons.account_box),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16)),
-                      hintText: "Please input your Username",
-                      labelText: "Username *"),
-                ),
-
-                const SizedBox(
-                  height: 16,
-                ),
-
-                TextFormField(
-                  controller: _emailController,
-                  cursorColor: Colors.blueAccent,
-                  keyboardType: TextInputType.emailAddress,
-                  obscureText: false,
-                  onChanged: (value) => model.email,
-                  validator: (value) => evalEmail(value),
-                  decoration: InputDecoration(
-                      icon: Icon(Icons.email),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16)),
-                      hintText: "Please input your email",
-                      labelText: "Email *"),
-                ),
-
-                const SizedBox(
-                  height: 16,
-                ),
-                //Textfile input for password
-                TextFormField(
-                  controller: _passwordController,
-                  cursorColor: Colors.blueAccent,
-                  keyboardType: TextInputType.visiblePassword,
-                  obscureText: true,
-                  onChanged: (value) => model.password,
-                  validator: (value) => evalEmail(value),
-                  decoration: InputDecoration(
-                      icon: Icon(Icons.lock),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16)),
-                      hintText: "Please input your password",
-                      labelText: "Password *"),
-                ),
-
-                const SizedBox(
-                  height: 16,
-                ),
-                //Textfield input for bio
-                TextFormField(
-                  controller: _bioController,
-                  cursorColor: Colors.blueAccent,
-                  keyboardType: TextInputType.text,
-                  obscureText: false,
-                  onChanged: (value) => model.bio,
-                  validator: (value) => evalBio(value),
-                  decoration: InputDecoration(
-                      icon: Icon(Icons.book_outlined),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16)),
-                      hintText: "Please input your Bio",
-                      labelText: "Bio *"),
-                ),
-
-                const SizedBox(
-                  height: 18,
-                ),
-
-                //button signup
-                InkWell(
-                  onTap: () async {
-                    String res = await AuthMethods().signUpUser(
-                      email: _emailController.text,
-                      password: _passwordController.text,
-                      username: _usernameController.text,
-                      bio: _bioController.text,
-                      file: _image!,
-                    );
-                    print(res);
-                  },
-                  child: Container(
-                    child: const Text('Sign up'),
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    width: double.infinity,
-                    decoration: const ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(4))),
-                      color: blueColor,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 48,
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              const SizedBox(
+                height: 16,
+              ),
+              //Cicular Widget to accept and show our selected file
+              if (!isKeyboard)
+                Stack(
                   children: [
-                    Container(
-                      child: const Text('Already have an account ?'),
+                    _image != null
+                        ? CircleAvatar(
+                            radius: 64,
+                            backgroundImage: MemoryImage(_image!),
+                          )
+                        : CircleAvatar(
+                            radius: 64,
+                            backgroundImage: NetworkImage(
+                                'https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg'),
+                          ),
+                    Positioned(
+                        bottom: -10,
+                        left: 80,
+                        child: IconButton(
+                          onPressed: selectImage,
+                          icon: const Icon(
+                            Icons.add_a_photo,
+                          ),
+                        ))
+                  ],
+                ),
+
+              const SizedBox(
+                height: 16,
+              ),
+
+              //Textfield input for username
+              TextFieldInput(
+                  textEditingController: _usernameController,
+                  hintText: "Enter your username",
+                  textInputType: TextInputType.text),
+
+              const SizedBox(
+                height: 16,
+              ),
+
+              //Textfield input for email
+              TextFieldInput(
+                hintText: 'Enter your email.',
+                textInputType: TextInputType.emailAddress,
+                textEditingController: _emailController,
+              ),
+
+              const SizedBox(
+                height: 16,
+              ),
+              //Textfile input for password
+              TextFieldInput(
+                textEditingController: _passwordController,
+                hintText: "Enter your password",
+                textInputType: TextInputType.text,
+                isPass: true,
+              ),
+
+              const SizedBox(
+                height: 18,
+              ),
+              //Textfield input for bio
+              TextFieldInput(
+                textEditingController: _bioController,
+                hintText: "Enter your bio",
+                textInputType: TextInputType.text,
+                isPass: false,
+              ),
+
+              const SizedBox(
+                height: 18,
+              ),
+
+              //button signup
+              InkWell(
+                onTap: signUpUser,
+                child: Container(
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: primaryColor,
+                          ),
+                        )
+                      : const Text('Sign up'),
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  width: double.infinity,
+                  decoration: const ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(4))),
+                    color: blueColor,
+                  ),
+                ),
+              ),
+
+              const SizedBox(
+                height: 26,
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    child: const Text('Already have an account ?'),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                  ),
+                  InkWell(
+                    child: Container(
+                      child: const Text(
+                        'Log in',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 8),
                     ),
-                    InkWell(
-                      child: Container(
-                        child: const Text(
-                          'Log in',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
+                  )
+                ],
+              )
+            ],
           ),
         ),
       ),

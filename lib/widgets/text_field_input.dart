@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:learningdart/resources/validators.dart';
 
 class TextFieldInput extends StatelessWidget {
   final TextEditingController textEditingController;
   final bool isPass;
   final String hintText;
   final TextInputType textInputType;
-  const TextFieldInput(
-      {Key? key,
-      required this.textEditingController,
-      this.isPass = false,
-      required this.hintText,
-      required this.textInputType})
-      : super(key: key);
+
+  const TextFieldInput({
+    Key? key,
+    required this.textEditingController,
+    this.isPass = false,
+    required this.hintText,
+    required this.textInputType,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,8 @@ class TextFieldInput extends StatelessWidget {
       borderSide: Divider.createBorderSide(context),
     );
 
-    return TextField(
+    return TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: textEditingController,
       decoration: InputDecoration(
         hintText: hintText,
