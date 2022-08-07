@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:learningdart/models/user.dart';
 import 'package:learningdart/providers/user_provider.dart';
 import 'package:learningdart/resources/firestore_methods.dart';
+import 'package:learningdart/screens/comments_screen.dart';
 import 'package:learningdart/utils/colors.dart';
 import 'package:learningdart/widgets/like_animation.dart';
 import 'package:provider/provider.dart';
@@ -158,8 +159,15 @@ class _PostCardState extends State<PostCard> {
                       : const Icon(Icons.favorite_border),
                 ),
               ),
+              //CommentScreen Section
               IconButton(
-                onPressed: () {},
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => CommentsScreen(
+                      snap: widget.snap,
+                    ),
+                  ),
+                ),
                 icon: const Icon(
                   Icons.comment_outlined,
                 ),
