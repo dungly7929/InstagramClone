@@ -240,6 +240,7 @@ class _PostCardState extends State<PostCard> {
                     ),
                   ),
                 ),
+                //Show time
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 4),
                   child: Text(
