@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:learningdart/models/user.dart';
 import 'package:learningdart/providers/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class CommentCard extends StatefulWidget {
-  const CommentCard({Key? key}) : super(key: key);
+  final snap;
+  const CommentCard({Key? key, required this.snap}) : super(key: key);
 
   @override
   State<CommentCard> createState() => _CommentCardState();
@@ -19,8 +21,7 @@ class _CommentCardState extends State<CommentCard> {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(
-                'https://images.unsplash.com/photo-1659700445342-c341b247bc58?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=737&q=80'),
+            backgroundImage: NetworkImage(widget.snap['profilePic']),
             radius: 18,
           ),
           Expanded(
@@ -35,20 +36,21 @@ class _CommentCardState extends State<CommentCard> {
                   RichText(
                     text: TextSpan(children: [
                       TextSpan(
-                        text: 'username',
+                        text: widget.snap['name'],
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       TextSpan(
-                        text: ' description !!!!!',
+                        text: ' ${widget.snap['text']}',
                       ),
                     ]),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
-                      '12/1455/55',
+                      timeago.format(DateTime.parse(
+                          widget.snap['datePublished'].toDate().toString())),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
@@ -59,11 +61,14 @@ class _CommentCardState extends State<CommentCard> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            child: const Icon(
-              Icons.favorite,
-              size: 16,
+          InkWell(
+            onTap: () {},
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              child: const Icon(
+                Icons.favorite,
+                size: 16,
+              ),
             ),
           )
         ],
