@@ -70,14 +70,44 @@ class FirestoreMethods {
             .doc(commentId)
             .set({
           'profilePic': profilePic,
+          'postId': postId,
           'name': name,
           'uid': uid,
           'text': text,
           'commentId': commentId,
           'datePublished': DateTime.now(),
+          'likes': [],
         });
       } else {
         print('text is empty !');
+      }
+    } catch (err) {
+      print(err.toString());
+    }
+  }
+
+  //use to store and display the likes of the comments
+  Future<void> likeCommend(
+      String postId, String uid, List likes, String commentId) async {
+    try {
+      if (likes.contains(uid)) {
+        await _firestore
+            .collection('posts')
+            .doc(postId)
+            .collection('comments')
+            .doc(commentId)
+            .update({
+          'likes': FieldValue.arrayRemove([uid]),
+        });
+      } else {
+        await _firestore
+            .collection('posts')
+            .doc(postId)
+            .collection('comments')
+            .doc(commentId)
+            .update({
+          'likes': FieldValue.arrayUnion([uid]),
+        });
       }
     } catch (err) {
       print(err.toString());
